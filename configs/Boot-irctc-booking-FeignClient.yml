@@ -19,3 +19,16 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+  resilience4j: 
+    circuitbreaker:
+      instances:
+        Payment-Service:
+          registerhealthIndicator: true
+          slidingWindowsize: 5
+          minimumNumberofcalls: 5
+          failureRateThreshold: 50
+          waitDurationInopenstate: 20s 
+          permittedNumberofCallsInHalfOpenstate: 2
+          automaticTransitionFromopenToHalfopenEnabled: true 
+
