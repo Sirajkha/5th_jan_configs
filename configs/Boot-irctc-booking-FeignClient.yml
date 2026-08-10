@@ -31,4 +31,6 @@ spring:
           waitDurationInopenstate: 20s 
           permittedNumberofCallsInHalfOpenstate: 2
           automaticTransitionFromopenToHalfopenEnabled: true 
-
+  logging:
+    level:
+      io.github.resilience4j: DEBUG
