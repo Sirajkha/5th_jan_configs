@@ -1,0 +1,33 @@
+server:
+  port: 8089
+
+spring:
+  application:
+    name: API-Gateways
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: irctc-booking-service
+              uri: lb://04-IRCTC-BOOKING
+              predicates:
+                - Path=/irctc/booking/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 5
+                    redis-rate-limiter.burstCapacity: 5
+                    redis-rate-limiter.requestedTokens: 1
+                    key-resolver: "#{@ipKeyResolver}"
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
