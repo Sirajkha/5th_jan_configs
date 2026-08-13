@@ -15,22 +15,66 @@ spring:
 
   kafka:
     bootstrap-servers: localhost:9092
-
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
-  resilience4j: 
-    circuitbreaker:
-      instances:
-        Payment-Service:
-          registerhealthIndicator: true
-          slidingWindowsize: 5
-          minimumNumberofcalls: 5
-          failureRateThreshold: 50
-          waitDurationInopenstate: 20s 
-          permittedNumberofCallsInHalfOpenstate: 2
-          automaticTransitionFromopenToHalfopenEnabled: true 
-  logging:
-    level:
-      io.github.resilience4j: DEBUG
+  cloud:
+    openfeign:
+      micrometer:
+        enabled: true
+
+
+# ==========================================
+# Resilience4j Circuit Breaker
+# ==========================================
+resilience4j:
+  circuitbreaker:
+    instances:
+      Payment-Service:
+        registerHealthIndicator: true
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 20s
+        permittedNumberOfCallsInHalfOpenState: 2
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+
+
+# ==========================================
+# Logging
+# ==========================================
+logging:
+  level:
+    io.github.resilience4j: DEBUG
+
+  pattern:
+    level: "%5p [${spring.application.name:},traceId=%X{traceId:-},spanId=%X{spanId:-}]"
+
+
+# ==========================================
+# Actuator
+# ==========================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  endpoint:
+    health:
+      show-details: always
+
+
+# ==========================================
+# Micrometer Tracing
+# ==========================================
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+
+    export:
+      zipkin:
+        enabled: true
+        endpoint: http://localhost:9411/api/v2/spans
